@@ -8,11 +8,14 @@
 #define _MAC 4  // Keymap _MAC: Macro and Function Key Layer
 #define _GM 5  // Keymap _GM: Gaming Layer
 
+// Tap Dance Keycodes
+enum {
+    TD_LAYER
+};
+
+// Custom Keycodes/Keycode Aliases
 enum custom_keycodes {
-    // Custom Keycodes/Keycode Aliases
     CAPS = SAFE_RANGE,
-    // Tap Dance Keycodes
-    TD_LAYER,
     // Macro Keycodes
     EMAIL_PS, // Type Out Personal Email
     EMAIL_PR, // Type Out Professional Email
@@ -232,15 +235,17 @@ static td_tap_t td_layer_tap_state = {
 void td_layer_finished(qk_tap_dance_state_t *state, void *user_data) {
     td_layer_tap_state.state = cur_dance(state);
     switch (td_layer_tap_state.state) {
-        case TD_SINGLE_TAP: register_code(TG(_GM)); break;
-        case TD_TRIPLE_TAP: register_code(DF(_QW)); break;
+        case TD_SINGLE_TAP: register_code16(TG(_GM)); break;
+        case TD_TRIPLE_TAP: register_code16(DF(_QW)); break;
+        default: break;
     }
 }
 
 void td_layer_reset(qk_tap_dance_state_t *state, void *user_data) {
     switch (td_layer_tap_state.state) {
-        case TD_SINGLE_TAP: unregister_code(TG(_GM)); break;
-        case TD_TRIPLE_TAP: unregister_code(DF(_QW)); break;
+        case TD_SINGLE_TAP: unregister_code16(TG(_GM)); break;
+        case TD_TRIPLE_TAP: unregister_code16(DF(_QW)); break;
+        default: break;
     }
     td_layer_tap_state.state = TD_NONE;
 }
