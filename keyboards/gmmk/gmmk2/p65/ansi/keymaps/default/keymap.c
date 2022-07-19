@@ -73,11 +73,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_LCTL,  KC_LGUI,  KC_LALT,                                KC_SPC,                                 KC_RALT,  MO(1),    KC_LEFT,  KC_DOWN,  KC_RGHT),
 
 [1] = LAYOUT(
-  KC_GRV,  KC_F1,  KC_F2,  KC_F3,  KC_F4,  KC_F5,  KC_F6,  KC_F7,  KC_F8,  KC_F9,  KC_F10,  KC_F11,  KC_F12,  _______,  KC_INS,
-  TO(2)  ,  DEBUG  ,  KC_CALCULATOR,  _______,  QK_CLEAR_EEPROM,  _______,  _______,  _______,  _______,  _______,  KC_PSCR,  KC_SCRL,  KC_PAUS,  _______,  _______,
-  TO(0)  ,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,			  _______,
-  _______,  RGB_HUI,  RGB_HUD,  RGB_SPD,  RGB_SPI,  _______,  KC_MUTE,  KC_VOLU,  KC_VOLD,  KC_MPRV,  KC_MPLY,  KC_MNXT,  			RGB_VAI,  KC_HOME,
-  _______,  _______,  _______,                                RESET,                                  _______,  _______,  RGB_RMOD, RGB_VAD,  RGB_MOD),
+  KC_GRV ,  KC_F1  ,  KC_F2  ,  KC_F3,  KC_F4,  KC_F5,  KC_F6,  KC_F7,  KC_F8,  KC_F9,  KC_F10,  KC_F11,  KC_F12,  _______,  KC_INS,
+  TO(2)  ,  DEBUG  ,  KC_CALCULATOR,  _______,  RESET,  QK_CLEAR_EEPROM,  _______,  _______,  _______,  _______,  KC_PSCR,  KC_SCRL,  KC_PAUS,  _______,  _______,
+  TO(0)  ,  RGB_HUI,  RGB_HUD,  RGB_SPD,  RGB_SPI,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,			  _______,
+  _______,  LCTL(KC_Z),  LCTL(KC_X),  LCTL(KC_C),  LCTL(KC_V),  KC_MUTE,  KC_VOLD,  KC_VOLU,  KC_MPRV,  KC_MPLY,  KC_MNXT,  _______,  			RGB_VAI,  KC_HOME,
+  _______,  _______,  _______,                                _______,                                  _______,  _______,  RGB_RMOD, RGB_VAD,  RGB_MOD),
 
 
 [2] = LAYOUT(
@@ -164,9 +164,15 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 				rgb_matrix_set_color(15, 255, 255, 255); 
 				rgb_matrix_set_color(16, 255, 255, 255);
 				rgb_matrix_set_color(17, 255, 255, 255);
+				rgb_matrix_set_color(19, 255, 0, 0);
+				rgb_matrix_set_color(20, 255, 0, 0);
 				rgb_matrix_set_color(25, 255, 255, 255);
 				rgb_matrix_set_color(26, 255, 255, 255);
 				rgb_matrix_set_color(27, 255, 255, 255);
+				rgb_matrix_set_color(31, 255, 255, 255);
+				rgb_matrix_set_color(32, 255, 255, 255);
+				rgb_matrix_set_color(33, 255, 255, 255);
+				rgb_matrix_set_color(34, 255, 255, 255);
 				rgb_matrix_set_color(45, 255, 255, 255);
 				rgb_matrix_set_color(46, 255, 255, 255);
 				rgb_matrix_set_color(47, 255, 255, 255);
