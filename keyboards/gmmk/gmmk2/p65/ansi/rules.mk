@@ -9,6 +9,7 @@ BOOTLOADER = wb32-dfu
 #
 TAP_DANCE_ENABLE=yes
 LEADER_ENABLE = yes
+DYNAMIC_MACRO_ENABLE = yes
 BOOTMAGIC_ENABLE = yes       # Enable Bootmagic Lite.
 MOUSEKEY_ENABLE = yes        # Mouse keys.
 EXTRAKEY_ENABLE = yes        # Audio control and System control.
