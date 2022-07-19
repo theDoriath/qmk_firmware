@@ -18,42 +18,38 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case COPY:
         if (record->event.pressed) {
             // when keycode QMKBEST is pressed
-            SEND_STRING(SS_DOWN(X_LCTL)SS_TAP(X_KP_C)SS_UP(X_LCTL));
+             SEND_STRING(SS_LCTL("ac"));
         } else {
             // when keycode QMKBEST is released
         }
         break;
-	
 	case PASTE:
         if (record->event.pressed) {
             // when keycode QMKBEST is pressed
-             SEND_STRING(SS_DOWN(X_LCTL)SS_TAP(X_KP_V)SS_UP(X_LCTL));
+            SEND_STRING(SS_LCTL("V")); 
         } else {
             // when keycode QMKBEST is released
         }
         break;
-	
 	case CUT:
         if (record->event.pressed) {
             // when keycode QMKBEST is pressed
-             SEND_STRING(SS_DOWN(X_LCTL)SS_TAP(X_KP_X)SS_UP(X_LCTL));
+           SEND_STRING(SS_LCTL("X")); 
         } else {
             // when keycode QMKBEST is released
         }
         break;
-	
 	case UNDO:
         if (record->event.pressed) {
             // when keycode QMKBEST is pressed
-             SEND_STRING(SS_DOWN(X_LCTL)SS_TAP(X_KP_Z)SS_UP(X_LCTL));
+            SEND_STRING(SS_LCTL("Z")); 
         } else {
-            // when keycode QMKBEST is released
+           
         }
         break;
-	
+	}
     return true;
 };
-
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [0] = LAYOUT(
