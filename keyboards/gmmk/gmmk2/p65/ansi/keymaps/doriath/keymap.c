@@ -23,7 +23,9 @@ enum ctrl_keycodes {
   CYCLE_lra,
   CYCLE_uda,
   RAIN_mcha,
-  CYCLE_oia
+  CYCLE_oia,
+  MD_GUITOG,
+  MD_LCAP
 };
 
 
@@ -33,11 +35,11 @@ enum ctrl_keycodes {
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [0] = LAYOUT(
-  KC_ESC,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,     KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,  KC_EQL,   KC_BSPC,  KC_DEL,
-  KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,     KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,  KC_HOME,
-  KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,  KC_ENT,             KC_END,
-  KC_LSFT,  KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  KC_RSFT,            KC_UP,    KC_PGDN,
-  KC_LCTL,  KC_LGUI,  KC_LALT,                                KC_SPC,                                 KC_RALT,  MO(1),    KC_LEFT,  KC_DOWN,  KC_RGHT),
+  KC_ESC,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,     KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,  KC_EQL,   KC_BSPC,  KC_DEL,     // 00-14
+  KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,     KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,  KC_HOME,    // 15-29
+  KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,  KC_ENT,             KC_END,     // 30-43
+  KC_LSFT,  KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  KC_RSFT,            KC_UP,    KC_PGDN,    // 44-57
+  KC_LCTL,  KC_LGUI,  KC_LALT,                                KC_SPC,                                 KC_RALT,  MO(1),    KC_LEFT,  KC_DOWN,  KC_RGHT),   // 58-66
 
 [1] = LAYOUT(
   KC_GRV,   KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,   KC_F12,   _______,  KC_INS,
@@ -60,9 +62,31 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 #define MODS_CTRL   (get_mods() & MOD_MASK_CTRL)
 #define MODS_ALT    (get_mods() & MOD_MASK_ALT)
 
-uint8_t mod_state_gui_tog;
+// static bool mod_state_GUI_TOG = false;
+// static bool mod_state_KC_LCAP = false;
+
+
+#define IDLE_TIMEOUT_MS 5000  // Idle timeout in milliseconds.
+static uint16_t idle_timer = 0;
+
+void matrix_scan_user(void) {
+  if (idle_timer && timer_expired(timer_read(), idle_timer)) {
+    // If execution reaches here, the keyboard has gone idle.
+    if (biton32(layer_state) == 2) {
+      layer_move(0);
+    }
+    idle_timer = 0;
+
+  }
+}
+
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  // On every key event, set idle_timer to expire after IDLE_TIMEOUT_MS.
+  // We use idle_timer == 0 to indicate that the timer is inactive, so
+  // the value is bitwise or'd with 1 to ensure it is nonzero.
+  idle_timer = (record->event.time + IDLE_TIMEOUT_MS) | 1;
+
   static uint32_t key_timer;
 
   switch (keycode) {
@@ -101,6 +125,34 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
     }
     return false;
+
+  // case MD_LCAP:
+  //   if (record -> event.pressed) {
+  //       if (mod_state_KC_LCAP) {
+  //         mod_state_KC_LCAP = false;
+  //         rgb_matrix_set_color(30, 0, 0, 0); // off
+  //         register_code(KC_LCAP);
+  //       } else {
+  //         mod_state_KC_LCAP = true;
+  //         rgb_matrix_set_color(30, 3, 200, 0); // yosemite green
+  //         unregister_code(KC_LCAP);
+  //       }
+  //   }
+  //   return false;
+  // case MD_GUITOG:
+  //   if (record -> event.pressed) {
+  //       if (mod_state_GUI_TOG) {
+  //         mod_state_GUI_TOG = false;
+  //         rgb_matrix_set_color(30, 0, 0, 0); // off
+  //         register_code(GUI_TOG);
+  //       } else {
+  //         mod_state_GUI_TOG = true;
+  //         rgb_matrix_set_color(30, 255, 0, 0); // red
+  //         unregister_code(GUI_TOG);
+  //     }
+  //   }
+  //   return false;
+
 
 
   case CYCLE_lra:
@@ -149,6 +201,11 @@ void suspend_power_down_user(void) {
 void suspend_wakeup_init_user(void) {
     rgb_matrix_set_suspend_state(false);
 }
+
+
+// void keyboard_post_init_user(void) {
+//   rgb_gui_state = false;
+// }
 
 //layer indication
 
