@@ -44,7 +44,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [1] = LAYOUT(
   KC_GRV,   KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,   KC_F12,   _______,  KC_INS,
   _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  KC_PSCR,  KC_SCRL,  KC_PAUS,  MD_BOOT,  _______,
-  _______,  _______,  RGB_TOG,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
+  MD_LCAP,  _______,  RGB_TOG,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
   _______,  RGB_HUI,  RGB_HUD,  RGB_SPD,  RGB_SPI,  KC_MUTE,  KC_VOLD,  KC_VOLU,  KC_MPRV,  KC_MPLY,  KC_MNXT,  _______,            RGB_VAI,  KC_PGUP,
   _______,  GUI_TOG,  _______,                                _______,                                TG(2),    _______,  RGB_RMOD, RGB_VAD,  RGB_MOD),
 
@@ -66,6 +66,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // static bool mod_state_KC_LCAP = false;
 
 
+
+bool caps_lock_on = false;
+static bool gui_lock_on = false;
+
+// void check_caps_lock_status(void) {
+//     if (caps_lock_on) {
+//         unregister_code(KC_CAPS);
+//     } else {
+//         register_code(KC_CAPS);
+//     }
+// }
+
+
+
 #define IDLE_TIMEOUT_MS 5000  // Idle timeout in milliseconds.
 static uint16_t idle_timer = 0;
 
@@ -76,8 +90,17 @@ void matrix_scan_user(void) {
       layer_move(0);
     }
     idle_timer = 0;
-
   }
+
+    if (caps_lock_on) {
+      rgb_matrix_set_color(30, 3, 200, 0); // yosemite green
+      rgb_matrix_set_color(44, 3, 200, 0); // yosemite green
+    }
+
+
+    if (gui_lock_on) {
+      rgb_matrix_set_color(59, 3, 200, 0); // yosemite green
+    }
 }
 
 
@@ -90,6 +113,46 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   static uint32_t key_timer;
 
   switch (keycode) {
+  case KC_CAPS:
+      if (record->event.pressed) {
+        if (caps_lock_on) {
+          unregister_code(KC_CAPS);
+        } else {
+          register_code(KC_CAPS);
+        }
+      }
+      return false;
+  case MD_LCAP:
+    if (record->event.pressed) {
+      caps_lock_on = !caps_lock_on;
+    }
+    return false;
+
+
+  // case KC_LGUI:
+  //   if (record->event.pressed) {
+  //     if (gui_lock_on) {
+  //       unregister_code(KC_LGUI);
+  //       unregister_mods(MOD_MASK_GUI);
+  //     } else {
+  //       register_code(KC_LGUI);
+  //     }
+  //   }
+  //   return false;    
+  // case MD_GUITOG:
+  //   if (record->event.pressed) {
+  //     gui_lock_on = !gui_lock_on;
+  //     unregister_mods(MOD_MASK_GUI);
+  //   }
+  //   return false;
+    case GUI_TOG:
+    if (record->event.pressed) {
+      gui_lock_on = !gui_lock_on;
+    }
+    return true;
+
+
+
   case MD_BOOT:
     if (record -> event.pressed) {
       key_timer = timer_read32();
@@ -200,6 +263,7 @@ void suspend_power_down_user(void) {
 
 void suspend_wakeup_init_user(void) {
     rgb_matrix_set_suspend_state(false);
+    clear_mods();
 }
 
 
