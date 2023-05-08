@@ -1,13 +1,14 @@
 #include QMK_KEYBOARD_H
+// #include "print.h"
 
 enum ctrl_keycodes {
+  MD_BOOT = SAFE_RANGE,               //Restart into bootloader after hold timeout
     // U_T_AUTO = SAFE_RANGE, //USB Extra Port Toggle Auto Detect / Always Active
     // U_T_AGCR,              //USB Toggle Automatic GCR control
     // DBG_TOG,               //DEBUG Toggle On / Off
     // DBG_MTRX,              //DEBUG Toggle Matrix Prints
     // DBG_KBD,               //DEBUG Toggle Keyboard Prints
     // DBG_MOU,               //DEBUG Toggle Mouse Prints
-    MD_BOOT = SAFE_RANGE,               //Restart into bootloader after hold timeout
     // QMK,                   //Nav to QMK folder
     // COMP,                  //QMK compile command for keyboard massdrop CTRL and keymap phonevon
     // LOAD,                  //mdload script command
@@ -25,7 +26,8 @@ enum ctrl_keycodes {
   RAIN_mcha,
   CYCLE_oia,
   MD_GUITOG,
-  MD_LCAP
+  MD_LCAP,
+  MD_PSPD // DEBUG print animation speed to console
 };
 
 
@@ -39,7 +41,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,     KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,  KC_HOME,    // 15-29
   KC_F13,   KC_A,     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,  KC_ENT,             KC_END,     // 30-43
   KC_LSFT,  KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  KC_RSFT,            KC_UP,    KC_PGDN,    // 44-57
-  KC_LCTL,  KC_LGUI,  KC_LALT,                                KC_SPC,                                 KC_RALT,  MO(1),    KC_LEFT,  KC_DOWN,  KC_RGHT),   // 58-66
+  KC_LCTL,  KC_LGUI,  KC_LALT,                                KC_SPC,                                 KC_RCTL,  MO(1),    KC_LEFT,  KC_DOWN,  KC_RGHT),   // 58-66
 
 [1] = LAYOUT(
   KC_GRV,   KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,   KC_F12,   _______,  KC_INS,
@@ -92,15 +94,15 @@ void matrix_scan_user(void) {
     idle_timer = 0;
   }
 
-    if (caps_lock_on) {
-      rgb_matrix_set_color(30, 3, 200, 0); // yosemite green
-      rgb_matrix_set_color(44, 3, 200, 0); // yosemite green
-    }
+  if (caps_lock_on) {
+    rgb_matrix_set_color(30, 3, 200, 0); // yosemite green
+    rgb_matrix_set_color(44, 3, 200, 0); // yosemite green
+  }
 
 
-    if (gui_lock_on) {
-      rgb_matrix_set_color(59, 3, 200, 0); // yosemite green
-    }
+  if (gui_lock_on) {
+    rgb_matrix_set_color(59, 3, 200, 0); // yosemite green
+  }
 }
 
 
@@ -113,7 +115,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   static uint32_t key_timer;
 
   switch (keycode) {
-  case KC_CAPS:
+    // case MD_PSPD:
+    //   if (record->event.pressed) {
+    //     uprintf("speed: %d\n", rgb_matrix_get_speed());
+    //   }
+    //   return false;
+
+    case KC_CAPS:
       if (record->event.pressed) {
         // if (caps_lock_on) {
         //   unregister_code(KC_CAPS);
@@ -268,9 +276,12 @@ void suspend_wakeup_init_user(void) {
 }
 
 
-// void keyboard_post_init_user(void) {
-//   rgb_gui_state = false;
-// }
+void keyboard_post_init_user(void) {
+  rgb_matrix_set_flags(LED_FLAG_ALL);
+  rgb_matrix_enable_noeeprom();
+  rgb_matrix_mode_noeeprom(RGB_MATRIX_RAINBOW_MOVING_CHEVRON);
+  rgb_matrix_set_speed(16);
+}
 
 //layer indication
 
@@ -296,27 +307,30 @@ void rgb_matrix_indicators_kb(void) {
 //layer 6 = RGB Selector = rotating rainbow
 
 void rgb_matrix_indicators_user(void) {
+  // don't apply layer colors when only UNDERGLOW is enabled
+  if (rgb_matrix_get_flags() == LED_FLAG_UNDERGLOW) {
+    return;
+  }
 
   uint8_t layer = biton32(layer_state);
 
   switch (layer) {
+    case 0:
+      break;
 
-  case 0:
-    break;
+    case 1:
+      // rgb_matrix_set_color_all(3, 113, 255);
+      rgb_matrix_set_color(49, 3, 200, 0); // yosemite green
+      rgb_matrix_set_color(50, 3, 200, 0); // yosemite green
+      rgb_matrix_set_color(51, 3, 200, 0); // yosemite green
+      rgb_matrix_set_color(52, 3, 200, 0); // yosemite green
+      rgb_matrix_set_color(53, 3, 200, 0); // yosemite green
+      rgb_matrix_set_color(54, 3, 200, 0); // yosemite green
 
-  case 1:
-    // rgb_matrix_set_color_all(3, 113, 255);
-    rgb_matrix_set_color(49, 3, 200, 0); // yosemite green
-    rgb_matrix_set_color(50, 3, 200, 0); // yosemite green
-    rgb_matrix_set_color(51, 3, 200, 0); // yosemite green
-    rgb_matrix_set_color(52, 3, 200, 0); // yosemite green
-    rgb_matrix_set_color(53, 3, 200, 0); // yosemite green
-    rgb_matrix_set_color(54, 3, 200, 0); // yosemite green
+      break;
 
-    break;
-
-  case 2:
-    rgb_matrix_set_color_all(0, 190, 255);
-    break;
+    case 2:
+      rgb_matrix_set_color_all(0, 190, 255);
+      break;
   }
 }
